@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Device;
+use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class FeedbackFactory extends Factory
@@ -14,7 +15,7 @@ class FeedbackFactory extends Factory
         return [
             'device_id' => Device::inRandomOrder()->first()?->id ?? 1,
             'type' => $this->faker->randomElement($feedbackTypes),
-            'session_id' => $this->faker->uuid(),
+            'session_id' => 'sess_' . Str::random(20),
             'ip_address' => $this->faker->ipv4(),
             'created_at' => $this->faker->dateTimeBetween('-6 months', 'now'),
         ];
