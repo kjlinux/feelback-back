@@ -47,18 +47,18 @@ return new class extends Migration
 
         DB::statement(
             "
-        CREATE VIEW v_daily_statistics AS
-        SELECT
-            DATE(created_at) as date,
-            COUNT(*) as total_feedbacks,
-            COUNT(CASE WHEN type = 'satisfied' THEN 1 END) as satisfied_count,
-            COUNT(CASE WHEN type = 'neutral' THEN 1 END) as neutral_count,
-            COUNT(CASE WHEN type = 'unsatisfied' THEN 1 END) as unsatisfied_count,
-            ROUND((COUNT(CASE WHEN type = 'satisfied' THEN 1 END)::DECIMAL / COUNT(*)::DECIMAL) * 100, 2) as satisfaction_rate
-        FROM feedbacks
-        WHERE deleted_at IS NULL
-        GROUP BY DATE(created_at)
-        ORDER BY date DESC;
+            CREATE VIEW v_daily_statistics AS
+            SELECT
+                DATE(created_at) as date,
+                COUNT(*) as total_feedbacks,
+                COUNT(CASE WHEN type = 'satisfied' THEN 1 END) as satisfied_count,
+                COUNT(CASE WHEN type = 'neutral' THEN 1 END) as neutral_count,
+                COUNT(CASE WHEN type = 'unsatisfied' THEN 1 END) as unsatisfied_count,
+                ROUND((COUNT(CASE WHEN type = 'satisfied' THEN 1 END)::DECIMAL / COUNT(*)::DECIMAL) * 100, 2) as satisfaction_rate
+            FROM feedbacks
+            WHERE deleted_at IS NULL
+            GROUP BY DATE(created_at)
+            ORDER BY date DESC;
         "
         );
 
