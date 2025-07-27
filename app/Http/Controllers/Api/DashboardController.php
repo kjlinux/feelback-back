@@ -45,7 +45,7 @@ class DashboardController extends Controller
      */
     public function getTemporalTrends(Request $request)
     {
-        $period = $request->input('period', 'daily'); // daily, weekly, monthly
+        $period = $request->input('period', 'daily');
         $startDate = $request->input('start_date', Carbon::now()->subDays(30));
         $endDate = $request->input('end_date', Carbon::now());
 
@@ -80,7 +80,7 @@ class DashboardController extends Controller
                 ORDER BY period";
                 break;
 
-            default: // daily
+            default:
                 $query .= "
                     date as period,
                     total_feedbacks,
@@ -232,8 +232,8 @@ class DashboardController extends Controller
      */
     public function getSentimentDistribution(Request $request)
     {
-        $period = $request->input('period', 7); // derniers X jours
-        // Conversion de la date en chaîne de caractères
+        $period = $request->input('period', 7);
+
         $startDate = Carbon::now()->subDays($period)->toDateTimeString();
 
         $data = DB::table('feedbacks')
@@ -287,10 +287,10 @@ class DashboardController extends Controller
     {
         $alerts = [];
 
-        // Dispositifs avec faible taux de satisfaction (< 60%)
+
         $lowSatisfaction = DB::table('v_device_activity_ranking')
             ->where('satisfaction_rate', '<', 60)
-            ->where('total_feedbacks', '>', 5) // minimum de feedbacks pour être significatif
+            ->where('total_feedbacks', '>', 5)
             ->get();
 
         foreach ($lowSatisfaction as $device) {
@@ -304,7 +304,7 @@ class DashboardController extends Controller
             ];
         }
 
-        // Dispositifs inactifs (pas de feedback depuis 7 jours)
+
         $inactiveDevices = DB::table('v_device_activity_ranking')
             ->where('last_feedback_date', '<', Carbon::now()->subDays(7))
             ->orWhereNull('last_feedback_date')
@@ -345,7 +345,7 @@ class DashboardController extends Controller
         ]);
     }
 
-    // Méthodes utilitaires
+
     private function getDeviceStatus($device)
     {
         if ($device->total_feedbacks == 0) return 'inactive';
@@ -356,9 +356,9 @@ class DashboardController extends Controller
 
     private function getHourColorByActivity($count)
     {
-        if ($count > 50) return '#28a745'; // Très actif - vert
-        if ($count > 20) return '#ffc107'; // Moyennement actif - jaune
-        if ($count > 5) return '#fd7e14';  // Peu actif - orange
-        return '#dc3545'; // Très peu actif - rouge
+        if ($count > 50) return '#28a745';
+        if ($count > 20) return '#ffc107';
+        if ($count > 5) return '#fd7e14';
+        return '#dc3545';
     }
 }
