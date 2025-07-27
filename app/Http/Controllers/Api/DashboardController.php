@@ -161,13 +161,13 @@ class DashboardController extends Controller
         $tableData = [];
 
         foreach ($devices as $device) {
-            $chartData['categories'][] = $device->name;
+            $chartData['categories'][] = $device->code;
             $chartData['series'][0]['data'][] = (float) $device->satisfaction_rate;
             $chartData['series'][1]['data'][] = (int) $device->total_feedbacks;
 
             $tableData[] = [
                 'id' => $device->id,
-                'name' => $device->name,
+                'name' => $device->code,
                 'location' => $device->location,
                 'total_feedbacks' => $device->total_feedbacks,
                 'satisfaction_rate' => $device->satisfaction_rate,

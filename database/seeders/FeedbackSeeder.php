@@ -14,12 +14,12 @@ class FeedbackSeeder extends Seeder
      */
     public function run(): void
     {
-        $this->command->info('Génération de 60 000 feedbacks...');
+        $this->command->info('Génération des feedbacks...');
 
         DB::statement('SET session_replication_role = replica;');
 
         $chunkSize = 1000;
-        $totalRecords = 60000;
+        $totalRecords = 154658;
         $chunks = $totalRecords / $chunkSize;
 
         $progressBar = $this->command->getOutput()->createProgressBar($chunks);
@@ -41,6 +41,6 @@ class FeedbackSeeder extends Seeder
 
         DB::statement('SET session_replication_role = DEFAULT;');
 
-        $this->command->info("\n 60 000 feedbacks générés avec succès.");
+        $this->command->info("\n Feedbacks générés avec succès.");
     }
 }

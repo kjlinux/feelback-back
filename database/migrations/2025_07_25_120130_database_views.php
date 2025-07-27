@@ -87,6 +87,7 @@ return new class extends Migration
             SELECT
                 d.id,
                 d.name,
+                d.code,
                 d.location,
                 COUNT(f.id) as total_feedbacks,
                 COUNT(DISTINCT DATE(f.created_at)) as active_days,
@@ -96,7 +97,7 @@ return new class extends Migration
             FROM devices d
             LEFT JOIN feedbacks f ON d.id = f.device_id AND f.deleted_at IS NULL
             WHERE d.deleted_at IS NULL
-            GROUP BY d.id, d.name, d.location
+            GROUP BY d.id, d.name, d.code, d.location
             ORDER BY total_feedbacks DESC;
             "
         );

@@ -15,17 +15,17 @@ class TestDataController extends Controller
     public function generateTestData(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'devices_count' => 'integer|min:1|max:100',
-            'feedbacks_count' => 'integer|min:1|max:10000',
-            'feedbacks_per_device' => 'integer|min:1|max:1000',
+            'devices_count' => 'integer|min:1',
+            'feedbacks_count' => 'integer|min:1',
+            'feedbacks_per_device' => 'integer|min:1',
             'days_range' => 'integer|min:1|max:365',
 
             'feedback_types' => 'array',
             'feedback_types.*' => 'in:unsatisfied,neutral,satisfied',
 
-            'unsatisfied_percentage' => 'integer|min:0|max:100',
-            'neutral_percentage' => 'integer|min:0|max:100',
-            'satisfied_percentage' => 'integer|min:0|max:100',
+            'unsatisfied_percentage' => 'integer|min:0',
+            'neutral_percentage' => 'integer|min:0',
+            'satisfied_percentage' => 'integer|min:0',
 
             'distribute_evenly' => 'boolean'
         ]);
@@ -104,7 +104,7 @@ class TestDataController extends Controller
         $validator = Validator::make($request->all(), [
             'device_id' => 'required|uuid|exists:devices,id',
             'type' => 'required|in:unsatisfied,neutral,satisfied',
-            'session_id' => 'nullable|string|max:100',
+            'session_id' => 'nullable|string',
             'ip_address' => 'nullable|ip'
         ]);
 
