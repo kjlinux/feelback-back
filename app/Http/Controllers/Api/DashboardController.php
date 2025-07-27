@@ -95,7 +95,6 @@ class DashboardController extends Controller
 
         $data = DB::select($query, [$startDate, $endDate]);
 
-        // Format pour Highcharts line chart
         $chartData = [
             'categories' => [],
             'series' => [
@@ -116,12 +115,19 @@ class DashboardController extends Controller
         ];
 
         foreach ($data as $item) {
-            $chartData['categories'][] = Carbon::parse($item->period)->format($period === 'daily' ? 'd/m' : ($period === 'weekly' ? 'W\WY' : 'm/Y'));
+            $chartData['categories'][] = Carbon::parse($item->period)->format(
+                $period === 'daily' ? 'd/m' : ($period === 'weekly' ? 'W\WY' : 'm/Y')
+            );
             $chartData['series'][0]['data'][] = (float) $item->satisfaction_rate;
             $chartData['series'][1]['data'][] = (int) $item->total_feedbacks;
         }
 
-        return response()->json($chartData);
+        return response()->json([
+            'status' => 'success',
+            'code' => 200,
+            'message' => 'Feedback ajouté avec succès',
+            'data' => $chartData
+        ]);
     }
 
     /**
@@ -227,13 +233,14 @@ class DashboardController extends Controller
     public function getSentimentDistribution(Request $request)
     {
         $period = $request->input('period', 7); // derniers X jours
-        $startDate = Carbon::now()->subDays($period);
+        // Conversion de la date en chaîne de caractères
+        $startDate = Carbon::now()->subDays($period)->toDateTimeString();
 
         $data = DB::table('feedbacks')
             ->select([
                 'type',
                 DB::raw('COUNT(*) as count'),
-                DB::raw('ROUND((COUNT(*)::DECIMAL / (SELECT COUNT(*) FROM feedbacks WHERE created_at >= ? AND deleted_at IS NULL)::DECIMAL) * 100, 2) as percentage')
+                DB::raw("ROUND((COUNT(*)::DECIMAL / (SELECT COUNT(*) FROM feedbacks WHERE created_at >= '{$startDate}' AND deleted_at IS NULL)::DECIMAL) * 100, 2) as percentage")
             ])
             ->where('created_at', '>=', $startDate)
             ->whereNull('deleted_at')
@@ -242,32 +249,32 @@ class DashboardController extends Controller
 
         $chartData = [];
         $colors = [
-            'satisfied' => '#28a745',
-            'neutral' => '#ffc107',
+            'satisfied'   => '#28a745',
+            'neutral'     => '#ffc107',
             'unsatisfied' => '#dc3545'
         ];
 
         $labels = [
-            'satisfied' => 'Satisfait',
-            'neutral' => 'Neutre',
+            'satisfied'   => 'Satisfait',
+            'neutral'     => 'Neutre',
             'unsatisfied' => 'Insatisfait'
         ];
 
         foreach ($data as $item) {
             $chartData[] = [
-                'name' => $labels[$item->type],
-                'y' => (int) $item->count,
+                'name'      => $labels[$item->type],
+                'y'         => (int) $item->count,
                 'percentage' => (float) $item->percentage,
-                'color' => $colors[$item->type],
+                'color'     => $colors[$item->type],
                 'drilldown' => $item->type
             ];
         }
 
         return response()->json([
             'series' => [[
-                'name' => 'Feedbacks',
+                'name'         => 'Feedbacks',
                 'colorByPoint' => true,
-                'data' => $chartData
+                'data'         => $chartData
             ]]
         ]);
     }

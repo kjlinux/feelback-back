@@ -7,6 +7,10 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // })->middleware('auth:sanctum');
 
-require('routers/auth.php');
-require('routers/app.php');
+Route::prefix('auth')->group(function () {
+    require('routers/auth.php');
+});
+Route::prefix('app')->group(function () {
+    require('routers/app.php');
+});
 require('routers/settings.php');
